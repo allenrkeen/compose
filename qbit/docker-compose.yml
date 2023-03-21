@@ -1,0 +1,49 @@
+version: "3"
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    # line above must be uncommented to allow external containers to connect. See https://github.com/qdm12/gluetun/wiki/Connect-a-container-to-gluetun#external-container-to-gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+    #   - 8488:8888/tcp # HTTP proxy
+    #   - 8388:8388/tcp # Shadowsocks
+    #   - 8388:8388/udp # Shadowsocks
+      - 8080:8080/tcp #qbit webui
+      - 6881:6881 #transmission peer
+      - 6881:6881/udp #transmission peer
+    volumes:
+      - /configs/gluetun:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun/wiki
+      - VPN_SERVICE_PROVIDER=custom
+      - OPENVPN_CUSTOM_CONFIG=/gluetun/custom.conf
+      # OpenVPN:
+      - OPENVPN_USER=fauxpaws
+      - OPENVPN_PASSWORD=Harley10
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/16
+      # Wireguard:
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=
+      # - WIREGUARD_ADDRESSES=10.64.222.21/32
+      # Timezone for accurate log times
+      - TZ=America/Chicago
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - WEBUI_PORT=8080
+    volumes:
+      - /configs/qbittorrent:/config
+      - /library:/downloads
+    # ports:
+    #   - 8080:8080
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    restart: unless-stopped
+    network_mode: "service:gluetun"

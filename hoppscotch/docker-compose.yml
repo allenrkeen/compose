@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  hoppscotch:
+    image: hoppscotch/hoppscotch
+    network_mode: bridge
+    ports:
+      - 3500:3000

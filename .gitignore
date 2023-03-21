@@ -1,0 +1,17 @@
+fail2ban/
+grafana/
+homebridge/
+meshcentral/
+monitorr/
+musebot/
+organizr/
+pmm/
+portainer/
+tandoor/mediafiles/
+tandoor/postgresql/
+tandoor/.env
+tdarr/
+tor/
+vtt/
+vtt1/
+yt-dl/db/
